@@ -1,0 +1,220 @@
+import torch
+import torch.nn as nn
+from operator import itemgetter
+from torch.nn import Parameter
+
+def permutation_resort(arr):
+    indices = [ind for ind in range(len(arr))]
+    # print('indices',indices)
+    arr = zip(arr, indices)
+    arr = sorted(arr)
+    # print('arr',arr)
+    arr_resort = list(map(itemgetter(1), arr))
+    # print('arr_list',arr_list)
+    return arr_resort
+
+def featuremap_permutation(num_dimensions, dim_index):
+    total_dimensions = num_dimensions + 2
+    axial_dims = [ind for ind in range(1, total_dimensions) if ind != dim_index]
+    # print(axial_dims)
+    permutations = []
+
+    for axial_dim in axial_dims:
+        last_two_dims = [axial_dim, dim_index]       
+        # print(last_two_dims)
+        dims_rest = set(range(0, total_dimensions)) - set(last_two_dims)    
+        # print(dims_rest)
+        permutation = [*dims_rest, *last_two_dims]      
+        # print(permutation)
+        permutations.append(permutation)                  
+    # print(permutations)
+
+    return permutations
+
+class PermuteandReturn(nn.Module):
+    def __init__(self, permutation, SelfAttention):
+        super().__init__()
+        self.permutation = permutation
+        self.SelfAttention = SelfAttention
+        self.permutation_sort = permutation_resort(permutation)
+        # print(self.permutation_sort)
+
+    def forward(self, x, **kwargs):
+        featuremap = x.permute(*self.permutation).contiguous()
+        # print('featuremap',featuremap.shape)
+        shape = featuremap.shape
+        # print(shape)
+        *_, d1, d2 = shape
+        # print(d1,d2)
+
+        featuremap = featuremap.reshape(-1, d1, d2)       
+        # print(axial.shape)
+        featuremap = self.SelfAttention(featuremap, **kwargs)
+
+        featuremap = featuremap.reshape(*shape)
+        # print(featuremap.shape)
+        featuremap = featuremap.permute(*self.permutation_sort).contiguous()
+        # print(axial.shape)
+        return featuremap
+    
+class SelfAttention(nn.Module):
+    def __init__(self, dim, heads):
+        super().__init__()
+        self.heads = heads
+        self.dim_heads = dim // heads    
+        all_dim = self.dim_heads * heads    
+        # print(all_dim)
+
+        self.to_q = nn.Linear(dim, all_dim, bias = False)
+        self.to_kv = nn.Linear(dim, 2 * all_dim, bias = False)
+        # self.to_out = nn.Linear(all_dim, dim, bias = False)
+        self.to_out = nn.Linear(all_dim, dim)
+
+    def forward(self, x):
+        q, k, v = (self.to_q(x), *self.to_kv(x).chunk(2, dim=-1))
+        # print('q,k,v',q.shape,k.shape,v.shape)
+
+        b, d1, d2, h, e = *q.shape, self.heads, self.dim_heads
+        merge_heads = lambda x: x.reshape(b, -1, h, e).transpose(1, 2).reshape(b * h, -1, e)
+        q, k, v = map(merge_heads, (q, k, v))
+        # print('q,k,v',q.shape,k.shape,v.shape)
+
+        dots = torch.einsum('bie,bje->bij', q, k) * (e ** -0.5)  
+        dots = dots.softmax(dim=-1)                       
+        out = torch.einsum('bij,bje->bie', dots, v)      
+        # print('out',out.shape)
+
+        out = out.reshape(b, h, -1, e).transpose(1, 2).reshape(b, -1, d2)     
+        # print('out',out.shape)
+        out = self.to_out(out)                   
+        return out
+
+class PDI(nn.Module):
+    def __init__(self, dim, num_dimensions = 2, heads = 8, dim_index = 1, sum_axial_out = True):
+        super().__init__()
+        self.dim = dim
+        self.total_dimensions = num_dimensions + 2
+        self.dim_index = dim_index
+        self.heads = heads
+        assert (dim % heads) == 0, 'hidden dimension must be divisible by number of heads!'
+
+        attentions = []
+        for permutation in featuremap_permutation(num_dimensions, dim_index):
+            attentions.append(PermuteandReturn(permutation, SelfAttention(dim, heads)))
+        
+        self.axial_attentions = nn.ModuleList(attentions)
+        self.sum_axial_out = sum_axial_out
+
+    def forward(self, x):
+        assert len(x.shape) == self.total_dimensions, 'input tensor have false dimensions!'
+        assert x.shape[self.dim_index] == self.dim, 'input tensor does not match dim!'
+        if self.sum_axial_out:
+            return sum(map(lambda axial_attn: axial_attn(x), self.axial_attentions))
+        
+        for axial_attn in self.axial_attentions:
+            out = axial_attn(x)
+        return out
+    
+class axial_intense(nn.Module):
+    def __init__(self, in_channels=5 ,groups=8, dim_index=2):
+        super().__init__()
+        self.in_channels =in_channels
+        self.groups = groups
+        self.dim_index = dim_index
+        self.max_pool = nn.AdaptiveMaxPool3d(1)
+        self.avg_pool = nn.AdaptiveAvgPool3d(1)
+
+        self.cweight = Parameter(torch.ones(1, 1, 1, 1, 1))
+        self.cbias = Parameter(torch.zeros(1, in_channels, 1, 1, 1))
+        self.sweight = Parameter(torch.ones(1, 1, 1, 1, 1))
+        self.sbias = Parameter(torch.zeros(1, 1, 6, 96, 96))
+
+        self.sigmoid = nn.Sigmoid()
+        self.conv_spatial = nn.Conv3d(in_channels, 1, kernel_size=7, padding=3, dilation=1, bias=False)
+
+    @staticmethod
+    def spatial_redist(x, groups):
+        b, c, w, h, d = x.shape
+
+        x1 = x.reshape(b, c, groups, -1, h, d)
+        x2 = x1.permute(0, 1, 3, 2, 4, 5)   #(b,c,w/groups,groups,h,d)
+        x_final = x2.reshape(b, c, -1, h, d)
+        return x_final + x
+    
+    def forward(self, x):
+        b, c, w, h, d = x.shape
+
+        x_axial = x.reshape(b * self.groups, c, -1, h, d)
+        x_channel, x_spatial = x_axial.chunk(2, dim=self.dim_index)
+        # print('x_channel,x_spatial', x_channel.shape, x_spatial.shape)
+
+        max_out_channel = self.max_pool(x_channel)
+        avg_out_channel = self.avg_pool(x_channel)
+
+        channel_att = self.cweight * (max_out_channel+avg_out_channel) + self.cbias
+        channel_att = x_channel * self.sigmoid(channel_att)
+
+        spatial_att = self.sweight * self.conv_spatial(x_spatial) + self.sbias
+        spatial_att = x_spatial * self.sigmoid(spatial_att)
+        
+        out = torch.cat([channel_att, spatial_att], dim=self.dim_index)
+        out = out.reshape(b, c, -1, h, d)
+        final = self.spatial_redist(out, groups=self.groups)
+        return final + x
+
+
+def conv1x1(in_channels, out_channels, stride=1):
+    return nn.Conv3d(in_channels, out_channels, kernel_size=1, stride=stride,padding=0)
+
+def conv3x3(in_channels, out_channels, stride=1):
+    return nn.Conv3d(in_channels, out_channels, kernel_size=3, stride=stride,padding=1)
+
+def conv5x5(in_channels, out_channels, stride=1):
+    return nn.Conv3d(in_channels, out_channels, kernel_size=5, stride=stride,padding=2)
+
+def conv7x7(in_channels, out_channels, stride=1):
+    return nn.Conv3d(in_channels, out_channels, kernel_size=7, stride=stride,padding=3)
+
+class SAI(nn.Module):
+    def __init__(self, in_channels, groups, dim_index):
+        super().__init__()
+        
+        self.conv1 = conv1x1(in_channels, in_channels//2)
+        self.gn1 = nn.GroupNorm(num_groups=in_channels//2, num_channels=in_channels//2)
+
+        self.conv2 = conv3x3(in_channels//2, in_channels//2)
+        self.gn2 = nn.GroupNorm(num_groups=in_channels//2, num_channels=in_channels//2)
+
+        self.conv3 = conv1x1(in_channels//2, in_channels)
+        self.gn3 = nn.GroupNorm(num_groups=in_channels, num_channels=in_channels)
+
+        self.dim_index = dim_index
+        self.axial_intense = axial_intense(in_channels, groups, dim_index)
+        self.relu = nn.ReLU(inplace=True)
+
+    def forward(self, x):
+
+        out = self.conv1(x)
+        out = self.gn1(out)      
+        out = self.relu(out)
+
+        out = self.conv2(out) + out
+        out = self.gn2(out)
+        out = self.relu(out)
+
+        out = self.conv3(out)
+        out = self.gn3(out)
+        out = self.axial_intense(out)
+        return out
+    
+class PaR(nn.Module):
+    def __init__(self, axial_dim, in_channels, heads, groups):
+        super().__init__()
+        self.pdi = PDI(dim=axial_dim, num_dimensions=3, heads=heads, dim_index=2)
+        self.sai = SAI(in_channels=in_channels, groups=groups, dim_index=2)
+
+    def forward(self, x):
+        PDI_output = self.pdi(x)
+        SAI_out = self.sai(x)
+        sum_output = PDI_output + SAI_out
+        return sum_output
