@@ -1,8 +1,8 @@
 # PaR
 Official code implementation of Volumetric Axial Disentanglement
 
-## To Start
-Take 3D U-Net for example:
+# To Start
+## Take 3D U-Net for example:
 
     from model.3dunet import UNetModule
     from model.PaR import PaR
@@ -28,6 +28,39 @@ Take 3D U-Net for example:
 
         def forward(self, x):
             x1 = self.3DUNet(x)
+            x2 = self.par(x1)
+            x3 = self.sigmoid(x2)
+            out = x3 * x1 + x1
+            return out
+
+## Take UNETR for example:
+
+    from model.unetr import UNETR
+    from model.PaR import PaR
+    
+    class 3UNETR_PaR(nn.Module):
+        def __init__(self, out_classes):
+            super().__init__()
+            self.out_classes = out_classes
+            # Initialize the UNETR
+            self.UNETR = UNETR(
+                in_channels=1,
+                out_channels=self.out_classes,
+                img_size=(96, 96, 96),
+                feature_size=16,
+                hidden_size=768,
+                mlp_dim=3072,
+                num_heads=12,
+                pos_embed="perceptron",
+                norm_name="instance",
+                res_block=True,
+                dropout_rate=0.0)
+
+        self.par = PaR(axial_dim=96, in_channels=self.out_classes, heads=8, groups=8)
+        self.sigmoid= nn.Sigmoid()
+
+        def forward(self, x):
+            x1 = self.UNETR(x)
             x2 = self.par(x1)
             x3 = self.sigmoid(x2)
             out = x3 * x1 + x1
