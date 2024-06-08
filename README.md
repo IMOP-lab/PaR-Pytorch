@@ -26,9 +26,9 @@ Take 3D U-Net for example:
         self.par = PaR(axial_dim=96, in_channels=self.out_classes, heads=8, groups=8)
         self.sigmoid= nn.Sigmoid()
 
-    def forward(self, x):
-        x1 = self.UNet(x)
-        x2 = self.par(x1)
-        x3 = self.sigmoid(x2)
-        x4 = x3 * x1 + x1
-        return x4
+        def forward(self, x):
+            x1 = self.3DUNet(x)
+            x2 = self.par(x1)
+            x3 = self.sigmoid(x2)
+            out = x3 * x1 + x1
+            return out
