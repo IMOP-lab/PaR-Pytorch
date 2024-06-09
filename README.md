@@ -12,7 +12,7 @@ Official code implementation of Volumetric Axial Disentanglement
             super().__init__()
             self.out_classes = out_classes
             # Initialize the 3D-UNet
-            self.3DUNet = UNetModule(in_channels=1,
+            self.UNet3D = UNetModule(in_channels=1,
                 out_channels=self.out_classes,
                 lr_rate=1e-4,
                 class_weight=None,
@@ -27,7 +27,7 @@ Official code implementation of Volumetric Axial Disentanglement
         self.sigmoid= nn.Sigmoid()
 
         def forward(self, x):
-            x1 = self.3DUNet(x)
+            x1 = self.UNet3D(x)
             x2 = self.par(x1)
             x3 = self.sigmoid(x2)
             out = x3 * x1 + x1
