@@ -7,7 +7,7 @@ Official code implementation of Volumetric Axial Disentanglement
     from model.3dunet import UNetModule
     from model.PaR import PaR
     
-    class 3DUNet_PaR(nn.Module):
+    class UNet3D_PaR(nn.Module):
         def __init__(self, out_classes):
             super().__init__()
             self.out_classes = out_classes
@@ -38,7 +38,7 @@ Official code implementation of Volumetric Axial Disentanglement
     from model.unetr import UNETR
     from model.PaR import PaR
     
-    class 3UNETR_PaR(nn.Module):
+    class UNETR_PaR(nn.Module):
         def __init__(self, out_classes):
             super().__init__()
             self.out_classes = out_classes
