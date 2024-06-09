@@ -4,7 +4,7 @@ Official code implementation of Volumetric Axial Disentanglement
 # To Start
 ## Take 3D U-Net for example:
 
-    from model.3dunet import UNetModule
+    from model.unet3d import UNetModule
     from model.PaR import PaR
     
     class UNet3D_PaR(nn.Module):
