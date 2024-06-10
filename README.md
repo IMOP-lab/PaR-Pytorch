@@ -1,11 +1,27 @@
 # PaR
-Official code implementation of Volumetric Axial Disentanglement
+### Official code implementation of Volumetric Axial Disentanglement
 
+### [Project page](https://github.com/IMOP-lab/PaR-Pytorch) | [Our laboratory home page](https://github.com/IMOP-lab)
+
+# Method Details
+**We proposed PaR is a plug-and-play module that uses time-axial disentangling to enhance any volumetric segmentation. Its detailed structure is shown in Figure 1.**
+<div align=center>
+  <img src="https://github.com/IMOP-lab/PaR-Pytorch/blob/main/figures/PaR.png"width=80% height=80%>
+</div>
+<p align=center>
+  Figure 1: Detailed module structure of the PaR
+</p>
+
+**As a plug-and-play module, we'll show you how to easily integrate PaR into any network architecture.**
+ 
 # To Start
-## Take 3D U-Net for example:
+## Environment
+    python = 3.9.0
+    pytorch = 2.0.0+cu118
+    monai = 0.9.0
+    numpy = 1.23.2
 
-    from model.unet3d import UNetModule
-    from model.PaR import PaR
+## Take 3D U-Net for example:
     
     class UNet3D_PaR(nn.Module):
         def __init__(self, out_classes):
@@ -34,9 +50,6 @@ Official code implementation of Volumetric Axial Disentanglement
             return out
 
 ## Take UNETR for example:
-
-    from model.unetr import UNETR
-    from model.PaR import PaR
     
     class UNETR_PaR(nn.Module):
         def __init__(self, out_classes):
@@ -65,3 +78,5 @@ Official code implementation of Volumetric Axial Disentanglement
             x3 = self.sigmoid(x2)
             out = x3 * x1 + x1
             return out
+
+#Experiment 
