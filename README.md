@@ -98,4 +98,8 @@
   Figure 2: Qualitative results on the FALRE2021, OIMHS, and SegTHOR datasets.
 </p>
 
-## Ablation Study
+## Acknowledgement
+This repository is built using the [timm](https://github.com/rwightman/pytorch-image-models) library.
+
+## License
+This project is released under the MIT license. Please see the [LICENSE](LICENSE) file for more information.
