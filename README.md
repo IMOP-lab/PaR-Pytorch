@@ -6,7 +6,7 @@
 # Method Details
 **We proposed PaR is a plug-and-play module that uses time-axial disentangling to enhance any volumetric segmentation. Its detailed structure is shown in Figure 1.**
 <div align=center>
-  <img src="https://github.com/IMOP-lab/PaR-Pytorch/blob/main/figures/PaR.png"width=80% height=80%>
+  <img src="https://github.com/IMOP-lab/PaR-Pytorch/blob/main/figures/PaR.png">
 </div>
 <p align=center>
   Fig. 1: Detailed module structure of the PaR.
