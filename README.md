@@ -9,7 +9,7 @@
   <img src="https://github.com/IMOP-lab/PaR-Pytorch/blob/main/figures/PaR.png"width=80% height=80%>
 </div>
 <p align=center>
-  Figure 1: Detailed module structure of the PaR
+  Figure 1: Detailed module structure of the PaR.
 </p>
 
 **As a plug-and-play module, we'll show you how to easily integrate PaR into any network architecture.**
@@ -80,4 +80,4 @@
             return out
 
 # Experiment 
-**Here we present the quantitative and qualitative results of different benchmark models integrated with PaR.**
+**Here, we present the quantitative and qualitative results of different benchmark models on the public data sets FALRE2021, OIMHS, SegTHOR, and the improvement of the segmentation effect brought by the introduction of PaR.**
