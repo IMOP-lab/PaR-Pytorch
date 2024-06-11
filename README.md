@@ -92,7 +92,7 @@
 
 ## Qualitative Results
 <div>
-  <img src="https://github.com/IMOP-lab/PaR-Pytorch/blob/main/tables/PaR_cmp_result.png"width=80% height=80%>
+  <img src="https://github.com/IMOP-lab/PaR-Pytorch/blob/main/tables/PaR_cmp_result.png">
 </div>
 <p>
   Fig. 2: Qualitative results on the FALRE2021, OIMHS, and SegTHOR datasets.
