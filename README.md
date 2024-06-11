@@ -81,3 +81,10 @@
 
 # Experiment 
 **Here, we present the quantitative and qualitative results of different benchmark models on the public data sets FALRE2021, OIMHS, SegTHOR, and the improvement of the segmentation effect brought by the introduction of PaR.**
+
+<div align=center>
+  <img src="https://github.com/IMOP-lab/PaR-Pytorch/blob/main/figures/fig1.png">
+</div>
+<p align=center>
+  Figure 4: Comparison experiments between our method and 13 previous segmentation methods on the CMED dataset.
+</p>
