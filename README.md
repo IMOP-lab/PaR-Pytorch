@@ -99,5 +99,10 @@
 </p>
 
 ## License
-This project is licensed under the [MIT license]().
+**This project is licensed under the [MIT license](https://github.com/IMOP-lab/PaR-Pytorch/blob/main/LICENSE).**
+
+## Contributors
+**The PaR project was implemented with the help of the following contributors:**
+
+Xingru Huang, Jian Huang, Yihao Guo, Tianyun Zhang, Yaoqi Sun, Hong He, Shaowei Jiang.
 
