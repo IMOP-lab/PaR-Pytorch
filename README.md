@@ -9,7 +9,7 @@
   <img src="https://github.com/IMOP-lab/PaR-Pytorch/blob/main/figures/PaR.png"width=80% height=80%>
 </div>
 <p align=center>
-  Figure 1: Detailed module structure of the PaR.
+  Fig. 1: Detailed module structure of the PaR.
 </p>
 
 **As a plug-and-play module, we'll show you how to easily integrate PaR into any network architecture.**
@@ -87,7 +87,7 @@
   <img src="https://github.com/IMOP-lab/PaR-Pytorch/blob/main/figures/fig1.png">
 </div>
 <p align=center>
-  Figure 1: Quantitative results on the FALRE2021, OIMHS, and SegTHOR datasets.
+  Fig. 2: Quantitative results on the FALRE2021, OIMHS, and SegTHOR datasets.
 </p>
 
 ## Qualitative Results
@@ -95,7 +95,7 @@
   <img src="https://github.com/IMOP-lab/PaR-Pytorch/blob/main/tables/PaR_cmp_result.png">
 </div>
 <p align=center>
-  Figure 2: Qualitative results on the FALRE2021, OIMHS, and SegTHOR datasets.
+  Fig. 3: Qualitative results on the FALRE2021, OIMHS, and SegTHOR datasets.
 </p>
 
 ## License
@@ -105,4 +105,8 @@
 **The PaR project was implemented with the help of the following contributors:**
 
 Xingru Huang, Jian Huang, Yihao Guo, Tianyun Zhang, Yaoqi Sun, Hong He, Shaowei Jiang.
+
+
+
+
 
