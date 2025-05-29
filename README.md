@@ -1,7 +1,5 @@
 # PaR
-### Official code implementation of Volumetric Axial Disentanglement
-
-### [Project page](https://github.com/IMOP-lab/PaR-Pytorch) | [Our laboratory home page](https://github.com/IMOP-lab)
+### Official code implementation of Volumetric Axial Disentanglement Enabling Advancing in Medical Image Segmentation
 
 # Method Details
 **We proposed PaR is a plug-and-play module that uses time-axial disentangling to enhance any volumetric segmentation. Its detailed structure is shown in Figure 1.**
@@ -105,7 +103,7 @@
 ## Contributors
 **The PaR project was implemented with the help of the following contributors:**
 
-Xingru Huang, Jian Huang, Yihao Guo, Tianyun Zhang, Yaoqi Sun, Hong He, Shaowei Jiang.
+Xingru Huang, Jian Huang, Yihao Guo, Tianyun Zhang, Zhao Huang, Yaqi Wang, Ruipu Tang, Guangliang Cheng, Shaowei Jiang, Zhiwen Zheng, Jin Liu, Renjie Ruan, Xiaoshuai Zhang.
 
 
 
