@@ -220,7 +220,7 @@ class PaR(nn.Module):
         return sum_output
 
 #test
-input = torch.randn(2,5,96,96,96)
-module = PaR(axial_dim=96, in_channels=5, heads=8, groups=8)
-output = module(input)
-print(output.shape)
+#input = torch.randn(2,5,96,96,96)
+#module = PaR(axial_dim=96, in_channels=5, heads=8, groups=8)
+#output = module(input)
+#print(output.shape)
