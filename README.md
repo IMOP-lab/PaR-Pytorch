@@ -90,12 +90,31 @@
 </p>
 
 ## Qualitative Results
-<div>
-  <img src="https://github.com/IMOP-lab/PaR-Pytorch/blob/main/tables/PaR_cmp_result.png">
-</div>
-<p align=center>
-  Fig. 2: Qualitative results on the FALRE2021, OIMHS, and SegTHOR datasets.
-</p>
+| Methods | Params | FLOPs | FLARE2021 (Dice) | OIMHS (Dice) | SegTHOR (Dice) |
+|:--|--:|--:|--:|--:|--:|
+| 3D U-Net | 5.75 | 135.88 | 93.08 | 92.49 | 87.59 |
+| +PaR | 5.86 | 141.85 | 93.89 | 93.08 | 89.82 |
+| V-Net | 45.61 | 333.10 | 89.89 | 88.53 | 85.12 |
+| +PaR | 45.72 | 337.26 | 91.49 | 90.26 | 85.81 |
+| RAUNet | 70.69 | 366.89 | 93.08 | 91.14 | 88.13 |
+| +PaR | 70.80 | 373.06 | 93.28 | 92.25 | 89.08 |
+| ResUNet | 27.22 | 902.04 | 92.56 | 90.84 | 88.26 |
+| +PaR | 27.33 | 908.01 | 92.94 | 92.79 | 88.71 |
+| SegResNet | 4.70 | 61.32 | 91.81 | 90.52 | 86.99 |
+| +PaR | 4.81 | 67.29 | 93.13 | 91.35 | 89.60 |
+| MultiResUNet | 18.65 | 324.14 | 91.35 | 92.44 | 88.53 |
+| +PaR | 18.76 | 330.11 | 91.85 | 93.49 | 89.10 |
+| UNETR | 92.62 | 82.58 | 90.70 | 89.05 | 84.03 |
+| +PaR | 92.73 | 88.55 | 91.48 | 90.55 | 84.18 |
+| Swin UNETR | 61.99 | 329.46 | 93.23 | 92.82 | 87.26 |
+| +PaR | 62.10 | 335.63 | 94.04 | 93.27 | 87.42 |
+| TransBTS | 30.62 | 110.12 | 92.84 | 87.39 | 86.88 |
+| +PaR | 30.74 | 116.29 | 93.27 | 90.55 | 89.13 |
+| nnFormer | 149.1 | 224.36 | 91.43 | 88.29 | 86.65 |
+| +PaR | 149.21 | 230.53 | 93.69 | 91.80 | 87.69 |
+| 3D UX-NET | 53.00 | 627.90 | 93.31 | 93.01 | 87.34 |
+| +PaR | 53.11 | 637.93 | 93.84 | 93.66 | 87.77 |
+
 
 ## License
 **This project is licensed under the [MIT license](https://github.com/IMOP-lab/PaR-Pytorch/blob/main/LICENSE).**
